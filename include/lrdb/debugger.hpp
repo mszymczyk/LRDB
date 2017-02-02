@@ -584,8 +584,8 @@ class debugger {
   typedef std::function<void(debugger& debugger)> pause_handler_type;
   typedef std::function<void(debugger& debugger)> tick_handler_type;
 
-  debugger() : state_(0), pause_(false), step_type_(STEP_NONE) {}
-  debugger(lua_State* L) : state_(0), pause_(false), step_type_(STEP_NONE) {
+  debugger() : state_(0), pause_(true), step_type_(STEP_ENTRY) {}
+  debugger(lua_State* L) : state_(0), pause_(true), step_type_(STEP_ENTRY) {
     reset(L);
   }
   ~debugger() { reset(); }
@@ -693,7 +693,10 @@ class debugger {
       return "step_out";
     } else if (step_type_ == STEP_PAUSE) {
       return "pause";
+    } else if (step_type_ == STEP_ENTRY) {
+      return "entry";
     }
+
     return "exception";
   }
 
@@ -856,6 +859,7 @@ class debugger {
       case STEP_PAUSE:
         pause_ = true;
         break;
+      case STEP_ENTRY:
       case STEP_NONE:
         break;
     }
@@ -863,7 +867,6 @@ class debugger {
   void hook(lua_State* L, lua_Debug* ar) {
     current_debug_info_.assign(L, ar);
     current_breakpoint_ = 0;
-    pause_ = false;
     tick();
 
     if (!pause_ && ar->event == LUA_HOOKLINE) {
@@ -901,6 +904,7 @@ class debugger {
     STEP_IN,
     STEP_OUT,
     STEP_PAUSE,
+    STEP_ENTRY,
   };
 
   lua_State* state_;

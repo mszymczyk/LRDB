@@ -9,6 +9,7 @@ include(cmake/ReduceDependencies.cmake)
 if(EMSCRIPTEN)
   set(CMAKE_C_FLAGS "${CMAKE_CXX_FLAGS}  --memory-init-file 0 -s TOTAL_MEMORY=8777216 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --memory-init-file 0 -s TOTAL_MEMORY=8777216 -s EMTERPRETIFY=1 -s EMTERPRETIFY_ASYNC=1 -s EXPORTED_FUNCTIONS=\"['_main', '_lrdb_server_socket_on_connect', '_lrdb_server_socket_on_close', '_lrdb_server_socket_on_error', '_lrdb_server_socket_on_data']\"")
+  add_definitions(-DLRDB_USE_NODE_CHILD_PROCESS)
 endif(EMSCRIPTEN)
 
 if(LUA)
